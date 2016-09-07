@@ -2,5 +2,5 @@
     
         this is a message I plan to send to you.
     
-        regards
+        Regards,
           the Perl Maven
