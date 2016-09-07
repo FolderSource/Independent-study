@@ -16,9 +16,9 @@ my $file = "temp.txt";
 
 
 my $filename   ="";
-my $width      = 0;
-my $stages     = 0;
-my $reset      = 0;
+my $width      ="";
+my $stages     ="";
+my $reset      ="";
 my $outfile    ="";
 
 #foreach (@ARGV)
@@ -46,24 +46,46 @@ or die "Incorrect usage!\n";close FILE;
 else {print "$0: Argument required.\n";
     exit 1
 }
-if ( $filename ne "" && ($width != 0 && $stages != 0 && $outfile ne ""))   {
-     print "fail test2\n"; 
+if ( $filename ne "" && ($width ne "" && $stages ne "" && $outfile ne ""))   {
+     	print "fail test2\n"; 
      die "Incorrect usage!\n";close FILE;
 
 }
-elsif ( $filename ne "" || ($width != 0 && $stages != 0 && $outfile ne ""))   {
-     print "pass test1\n"; 
-
+elsif ( $filename ne "" || ($width ne "" && $stages ne "" && $outfile ne ""))   {
+     	print "pass test1\n"; 
+     if ($filename ne ""){
+	$width = 1+0;        #default val
+        $stages =1+0;        #default val
+        $reset = 0+0;        #default val
+        $outfile = "outfile.txt";
+}
+     elsif($width ne "" && $stages ne "" && $outfile ne ""){
+	$filename = "temp.txt";  #default val
+        $width = $width+0;
+        $stages =$stages+0;
+     	if( ($width <1 || $width >64) || ($stages <2 || $stages >128) ){
+       		die "Limits of number!\n";close FILE;
+     	}
+        if ( $reset =~ "0x"){
+		$reset = substr($reset,2);
+                $reset = hex($reset);
+                print "$reset\n";
+  	} else {
+                $reset = $reset + 0;
+		print "$reset\n";
+        }
+     }
 }
 
 
 
 #if( $help ) {
-#    print "Common on, it's really not that hard.\n";
+#    print "Com'on, it's not that hard.\n";
 #} else {
     print "My name is $filename.\n";
     print "The width is $width.\n";
-    #print "$outfile\n";
+    print "The stages is $stages.\n";
+    print "$outfile\n";
 #}
 
 
@@ -76,12 +98,9 @@ unless(open FILE, '>'.$file){
 }
 
     my $message = <<"END_MESSAGE";
-        Dear bro,
+
     
-        this is a message I plan to send to you.
-    
-        Regards,
-          the Perl Maven
+        Testing complete!
 END_MESSAGE
     print $message;
 
