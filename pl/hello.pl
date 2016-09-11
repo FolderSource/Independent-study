@@ -92,13 +92,16 @@ my ($first_num) = $str =~ /(\d+)/;
 print "first_num $first_num";
 my @all_nums    = $str =~ /(\d+)/g;        
 print @all_nums;   
-#my $string = 'abc$hello-goodbye';  
+#my $string = 'abc$hello-/goodbye';  
 #print ((split /\./, $string)[0], "\n");
 #print substr($string,index($string, '.'),length $string)."\n";
 #$string =~ *//.s/\$.*//;
 #$string =~ s/\$.*//;
 #$print $string;
+my $text = ""; 
 
+#my ($a) = $text =~ /x\s*(.+)$/;
+#print $a;
 	#	my $count=0; :encoding(UTF-8)
 my $integer =0;
 #my $find = "width";
@@ -130,10 +133,11 @@ my $integer =0;
 			print " stages $stages\n";
  		}
 		elsif($row =~ "reset"){
-			if ( $reset =~ "0x"){
-				$reset = substr($row,2);
-		                $reset = hex($reset);
-	                	print "$reset\n";
+			if ( $row =~ "0x"){                # if string has 0x convert hex
+				my ($a) = $row =~ /x\s*(.+)$/;
+				#print $a;
+		                $reset = hex($a);
+	                	print "reset 0x is $reset\n";
 		  	}
 			else{
 			my ($reset_temp) = $row =~ /(\d+)/g;  
@@ -142,11 +146,8 @@ my $integer =0;
 			}
 		}
 		elsif($row =~ "outfile"){
-			#if ($row =~ /:\s*(.+)$/){
-			#my ($a) = $text =~ /:\s*(.+)$/;
-			#$array[3] = $a;
-			#}
-			#$array[3] = substr($row,index($row, '=')+1,(length $row)+1) ;
+			my ($a) = $row =~ /=\s*(.+)$/;    # read string after = sign
+			$outfile = $a;
 		}
   	#	$array[$count] = $row;
   	#	print "$row\n";
@@ -157,7 +158,7 @@ my $integer =0;
         #$width = $width;        #default val
         #$stages =$stages;        #default val
         #$reset = $reset;        #default val
-        $outfile = 'outfile.txt';  #default val
+        #$outfile = 'outfile.txt';  #default val
 }
      elsif((not $width =~ /^ *$/) && (not $stages =~ /^ *$/) && (not $outfile =~ /^ *$/)){
 	$filename = "";  #default val
