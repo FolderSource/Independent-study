@@ -1,0 +1,4 @@
+width =5
+stages =5
+reset =0xa
+outfile =verilog.v
