@@ -1,0 +1,54 @@
+module digit_reg (
+    reset,
+    clk,
+    in,
+    out,
+    scan_in0,
+    scan_en,
+    scan_out0
+    ) ;
+ 
+input
+    reset,                // system reset
+    clk ;                 // write strobe
+
+input [1:0]
+    in ;                  // data input
+
+output [1:0]
+    out ;                 // data output
+
+input
+    scan_in0,             // test scan mode data input
+    scan_en;              // test scan mode enable
+
+output
+    scan_out0;            // test scan mode data output
+
+wire [1:0]
+    out ;
+reg [1:0] R0;
+reg [1:0] R1;
+reg [1:0] R2;
+reg [1:0] R3;
+reg [1:0] R4;
+always @(posedge clk or posedge reset)
+    if (reset)
+        begin
+          R0 <= 1;
+          R1 <= 1;
+          R2 <= 1;
+          R3 <= 1;
+          R4 <= 1;
+        end
+    else
+        begin
+          R0 <= in;
+          R1 <= R0;
+          R2 <= R1;
+          R3 <= R2;
+          R4 <= R3;
+          out = R4;
+        end
+        
+endmodule 
