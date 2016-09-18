@@ -1,0 +1,5 @@
+
+width = 17;
+stages = 8;
+reset = 0xf;
+outfile = my_reg.v
