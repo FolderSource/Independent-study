@@ -12,10 +12,10 @@ input
     reset,                // system reset
     clk ;                 // write strobe
 
-input [1:0]
+input [9:0]
     in ;                  // data input
 
-output [1:0]
+output [9:0]
     out ;                 // data output
 
 input
@@ -25,21 +25,29 @@ input
 output
     scan_out0;            // test scan mode data output
 
-wire [1:0]
+wire [9:0]
     out ;
-reg [1:0] R0;
-reg [1:0] R1;
-reg [1:0] R2;
-reg [1:0] R3;
-reg [1:0] R4;
+reg [9:0] R0;
+reg [9:0] R1;
+reg [9:0] R2;
+reg [9:0] R3;
+reg [9:0] R4;
+reg [9:0] R5;
+reg [9:0] R6;
+reg [9:0] R7;
+reg [9:0] R8;
 always @(posedge clk or posedge reset)
     if (reset)
         begin
-          R0 <= 1;
-          R1 <= 1;
-          R2 <= 1;
-          R3 <= 1;
-          R4 <= 1;
+          R0 <= 8;
+          R1 <= 8;
+          R2 <= 8;
+          R3 <= 8;
+          R4 <= 8;
+          R5 <= 8;
+          R6 <= 8;
+          R7 <= 8;
+          R8 <= 8;
         end
     else
         begin
@@ -48,7 +56,11 @@ always @(posedge clk or posedge reset)
           R2 <= R1;
           R3 <= R2;
           R4 <= R3;
-          out = R4;
+          R5 <= R4;
+          R6 <= R5;
+          R7 <= R6;
+          R8 <= R7;
+          assign out = R8;
         end
         
 endmodule 

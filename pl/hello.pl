@@ -7,10 +7,11 @@
 use strict;
 use warnings;
 #use Path::Class;
-use Getopt::Long
+use Getopt::Long;
+print " Accpet commands as follows. -param filename or -width nn, -stages nn -reset nn and -outfile filename\n";
 # print a message
 #
-print "Hello, World!\n";
+#print "Hello, World!\n";
 # use Getopt::Long; GetOptions
 my $file = "temp.txt";
 #my $number; # = 33;
@@ -25,7 +26,7 @@ my $width      ="";
 my $stages     ="";
 my $reset      ="";
 my $outfile    ="";
-
+my $help       ="";
 #say $array[0];
 #foreach (@ARGV)
 #{  
@@ -40,6 +41,7 @@ if (@ARGV >0) {
 #}
 
 GetOptions(
+    'help|h'       => \$help,
     'param:s'      => \$filename,
     'width:i'      => \$width,
     'stages:i'     => \$stages,
@@ -75,23 +77,26 @@ or die "Incorrect usage!\n";close FILE;
 #my $text = "day1= string over here\n";
 
 #print $1 if ($text =~ /:\s*(.+)$/);
-
-if ( (not $filename =~ /^ *$/) && ((not $width =~ /^ *$/) && (not $stages =~ /^ *$/) && (not $outfile =~ /^ *$/)) )   {
-     	print "fail test2\n"; 
+if ($help){
+	print " Accpet commands as follows. -param filename or -width nn, -stages nn -reset nn and -outfile filename\n";
+	#die;
+}
+elsif ( (not $filename =~ /^ *$/) && ((not $width =~ /^ *$/) && (not $stages =~ /^ *$/) && (not $outfile =~ /^ *$/)) )   {
+     	#print "fail test2\n"; 
      die "Incorrect usage!\n";close FILE;
 
 }
 
 elsif ( (not $filename =~ /^ *$/) || ((not $width =~ /^ *$/) && (not $stages =~ /^ *$/) && (not $outfile =~ /^ *$/)) )   {
-     	print "pass test1\n"; 
+     	#print "pass test1\n"; 
      if (not $filename =~ /^ *$/){
 	# Read the file 
-my $str = 'abc 123 x456xy 789foo';
+#my $str = 'abc 123 x456xy 789foo';
 
-my ($first_num) = $str =~ /(\d+)/;
-print "first_num $first_num";
-my @all_nums    = $str =~ /(\d+)/g;        
-print @all_nums;   
+#my ($first_num) = $str =~ /(\d+)/;
+#print "first_num $first_num";
+#my @all_nums    = $str =~ /(\d+)/g;        
+#print @all_nums;   
 #my $string = 'abc$hello-/goodbye';  
 #print ((split /\./, $string)[0], "\n");
 #print substr($string,index($string, '.'),length $string)."\n";
@@ -114,47 +119,54 @@ my $integer =0;
         open(my $fh, '<', $filename) or die "Could not open file '$filename' $!";
 	while (my $row = <$fh>) {
   		chomp $row;
-		print "$row\n";
+		#print "$row\n";
 		if ($row =~ "width"){
-			print "read width";
+			#print "read width";
 			#$indexnum = index($row, '=')+1;
 			#print $indexnum+1; print length $row;
 			#$array[0] = substr($row,$indexnum  ,(length $row)) ;
 			# $array[0] = \*d*; doesn't work
 			my ($width_temp)   = $row =~ /(\d+)/g;  
 			$width = int($width_temp);
-			print $width;
+			#print $width;
 			
        		}
                 elsif($row =~ "stages"){
 			#$array[1] = substr($row,index($row, '=')+1,(length $row)+1) ;
 			my ($stages_temp) = $row =~ /(\d+)/g;  
 			$stages = int($stages_temp);
-			print " stages $stages\n";
+			#print " stages $stages\n";
  		}
 		elsif($row =~ "reset"){
 			if ( $row =~ "0x"){                # if string has 0x convert hex
 				my ($a) = $row =~ /x\s*(.+)$/;
 				#print $a;
-		                $reset = hex($a);
-	                	print "reset 0x is $reset\n";
+				$reset = substr($a, 0, index($a, ';'));
+		                $reset = hex($reset);
+	                	#print "reset 0x is $reset\n";
 		  	}
 			else{
 			my ($reset_temp) = $row =~ /(\d+)/g;  
 			$reset = int($reset_temp);
-			print "rest $reset\n";
+			#print "rest $reset\n";
 			}
 		}
 		elsif($row =~ "outfile"){
 			my ($a) = $row =~ /=\s*(.+)$/;    # read string after = sign
 			$outfile = $a;
 		}
+	#	my ($a) = $row =~ /=\s*(.+)$/;    # read string after = sign
+        #    $outfile = substr($a, 0, index($a, '.'));
+         
+        #    $outfile = $outfile.".v";
   	#	$array[$count] = $row;
   	#	print "$row\n";
   	#	$count = $count+1;
 
 	}
-
+	if (($reset) > ($width) ){
+	die "Reset shouldn't be larger than width\n"; close FILE;
+	}
         #$width = $width;        #default val
         #$stages =$stages;        #default val
         #$reset = $reset;        #default val
@@ -176,25 +188,26 @@ my $integer =0;
                 $reset = $reset + 0;
 		#print "$reset\n";
         }
+        if (($reset) > ($width) ){
+	die "Reset shouldn't be larger than width\n"; close FILE;
+	}
      }
     
 }
 else{
 		die "\n(Error ! Invalid argument)\n";
 }
-if (($reset) > ($width) ){
-	die "Reset shouldn't be larger than width\n"; close FILE;
-}
+
 
 
 #if( $help ) {
 #    print "Com'on, it's not that hard.\n";
 #} else {
-    print "My name is $filename.\n";
+    print "My filename is $filename.\n";
     print "The width is $width.\n";
     print "The stages is $stages.\n";
     print "The reset is $reset.\n";
-    print "$outfile\n";
+    print "The outfile is $outfile\n";
 #}
 
 
@@ -278,7 +291,7 @@ for (my $number=0;$number<$stages;$number++){
         print FILE $num." <= R".$number. ";\n";
    }
    else{ 
-        print FILE "          out = " . "R".$number.";\n" ;
+        print FILE "          assign out = " . "R".$number.";\n" ;
    }
 }
 my $message4 = <<"END_MESSAGE";

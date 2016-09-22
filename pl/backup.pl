@@ -8,10 +8,12 @@ use strict;
 use warnings;
 #use Path::Class;
 use Getopt::Long;
-print " Accpet commands as follows. -param filename or -width nn, -stages nn -reset nn and -outfile filename\n";
-
+# print a message
+#
+#print "Hello, World!\n";
+# use Getopt::Long; GetOptions
 my $file = "temp.txt";
-
+#my $number; # = 33;
 my $string = "reg";
 my $file2 = "file.txt";
 my $num = 0;
@@ -23,14 +25,12 @@ my $width      ="";
 my $stages     ="";
 my $reset      ="";
 my $outfile    ="";
-my $help       ="";
+my $text = ""; 
 
 if (@ARGV >0) {
      
 
-
 GetOptions(
-    'help|h'       => \$help,
     'param:s'      => \$filename,
     'width:i'      => \$width,
     'stages:i'     => \$stages,
@@ -40,57 +40,66 @@ GetOptions(
 or die "Incorrect usage!\n";close FILE;
 }
 
-if ($help){
-	print " Accpet commands as follows. -param filename or -width nn, -stages nn -reset nn and -outfile filename\n";
-	
-}
-elsif ( (not $filename =~ /^ *$/) && ((not $width =~ /^ *$/) && (not $stages =~ /^ *$/) && (not $outfile =~ /^ *$/)) )   {
-     	
+
+
+if ( (not $filename =~ /^ *$/) && ((not $width =~ /^ *$/) && (not $stages =~ /^ *$/) && (not $outfile =~ /^ *$/)) )   {
      die "Incorrect usage!\n";close FILE;
 
 }
 
 elsif ( (not $filename =~ /^ *$/) || ((not $width =~ /^ *$/) && (not $stages =~ /^ *$/) && (not $outfile =~ /^ *$/)) )   {
-     	
      if (not $filename =~ /^ *$/){
-	
 
         open(my $fh, '<', $filename) or die "Could not open file '$filename' $!";
 	while (my $row = <$fh>) {
   		chomp $row;
-
+		print "$row\n";
 		if ($row =~ "width"){
-
+			print "read width";
 			my ($width_temp)   = $row =~ /(\d+)/g;  
+			if ($width_temp =~ /^ *$/){
+			die "argument missing!\n";close FILE;
+			}
 			$width = int($width_temp);
+			print $width;
 			
        		}
                 elsif($row =~ "stages"){
-			
 			my ($stages_temp) = $row =~ /(\d+)/g;  
+			$stages = $stages_temp;
+			if ($stages =~ /^ *$/){
+			#print $stages_temp;
+			die "argument missing!\n";close FILE;
+			}
 			$stages = int($stages_temp);
-			
+			print " stages $stages\n";			
  		}
 		elsif($row =~ "reset"){
 			if ( $row =~ "0x"){                # if string has 0x convert hex
-				my ($a) = $row =~ /x\s*(.+)$/;				
-				$reset = substr($a, 0, index($a, ';'));
-		                $reset = hex($reset);
-	                	
+				my ($a) = $row =~ /x\s*(.+)$/;
+				#print $a;
+		                $reset = hex($a);
+	                	print "reset 0x is $reset\n";
 		  	}
 			else{
-			my ($reset_temp) = $row =~ /(\d+)/g;  
+			my ($reset_temp) = $row =~ /(\d+)/g; 
+			if ($reset_temp =~ /^ *$/){
+			die "argument missing!\n";close FILE;
+			} 
 			$reset = int($reset_temp);
+			print "rest $reset\n";
 			}
 		}
 		elsif($row =~ "outfile"){
 			my ($a) = $row =~ /=\s*(.+)$/;    # read string after = sign
-			$outfile = $a;
+			$outfile = substr($a, 0, index($a, '.'));
+			#print $outfile;
+			$outfile = $outfile.".v";
+		}
+		else{
+			die "argument missing!\n";close FILE;
 		}
 
-	}
-	if (($reset) > ($width) ){
-	die "Reset shouldn't be larger than width\n"; close FILE;
 	}
 
 }
@@ -105,27 +114,29 @@ elsif ( (not $filename =~ /^ *$/) || ((not $width =~ /^ *$/) && (not $stages =~ 
         if ( $reset =~ "0x"){
 		$reset = substr($reset,2);
                 $reset = hex($reset);
-                
   	} else {
                 $reset = $reset + 0;
-		
         }
-        if (($reset) > ($width) ){
-	die "Reset shouldn't be larger than width\n"; close FILE;
-	}
      }
     
 }
 else{
 		die "\n(Error ! Invalid argument)\n";
 }
+if ( $stages =~ /^ *$/ || $reset=~ /^ *$/ || $width=~ /^ *$/ || $outfile =~ /^ *$/ ){
+	die "argument missing!\n";close FILE;
+} 
+if (($reset) > ($width) ){
+	die "Reset shouldn't be larger than width\n"; close FILE;
+}
+
 
 
     print "My filename is $filename.\n";
     print "The width is $width.\n";
     print "The stages is $stages.\n";
     print "The reset is $reset.\n";
-    print "The outfile is $outfile\n";
+    print "$outfile\n";
 
 
 
@@ -136,6 +147,8 @@ unless(open FILE, '>'.$outfile){
 	die "\nUnable to create(outfile not provided) $outfile\n";
 }
 
+# Register bit wide  Reg0[bit-1:0] => Reg1[bit-1:0]
+#  Stages mean the no. of registers Reg99[bit-1:0] => Output[bit-1:0]; 
 
 $width = $width -1;                     
     my $message = <<"END_MESSAGE";
@@ -171,6 +184,7 @@ wire [$width:0]
 END_MESSAGE
 
     print FILE $message;
+
 
     for (my $number=0;$number<$stages;$number++)
     {
@@ -214,3 +228,10 @@ print FILE $message4;
 
 close FILE;
 
+
+
+#if ( $reset =~ /[0-9a-fA-F]+/ ) {
+ #  print "valid no."
+#} else {
+  # print "not valid no."
+#} 
