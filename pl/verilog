@@ -39,15 +39,15 @@ reg [9:0] R8;
 always @(posedge clk or posedge reset)
     if (reset)
         begin
-          R0 <= 8;
-          R1 <= 8;
-          R2 <= 8;
-          R3 <= 8;
-          R4 <= 8;
-          R5 <= 8;
-          R6 <= 8;
-          R7 <= 8;
-          R8 <= 8;
+          R0 <= 10;
+          R1 <= 10;
+          R2 <= 10;
+          R3 <= 10;
+          R4 <= 10;
+          R5 <= 10;
+          R6 <= 10;
+          R7 <= 10;
+          R8 <= 10;
         end
     else
         begin
