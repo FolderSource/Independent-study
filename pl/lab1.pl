@@ -135,11 +135,13 @@ else{
 unless(open FILE, '>'.$outfile){
 	die "\nUnable to create(outfile not provided) $outfile\n";
 }
+$outfile= substr($outfile, 0, index($outfile, '.'));
 
-
-$width = $width -1;                     
+$width = $width -1;
+print FILE "module ";   
+print FILE $outfile;                  
     my $message = <<"END_MESSAGE";
-module digit_reg (
+(
     reset,
     clk,
     in,
