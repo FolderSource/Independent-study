@@ -1,0 +1,48 @@
+module test( 
+    reset,
+    clk,
+    in,
+    out,
+    scan_in0,
+    scan_en,
+    scan_out0
+    ) ;
+ 
+input
+    reset,                // system reset
+    clk ;                 // write strobe
+
+input [1:0]
+    in ;                  // data input
+
+output [1:0]
+    out ;                 // data output
+
+input
+    scan_in0,             // test scan mode data input
+    scan_en;              // test scan mode enable
+
+output
+    scan_out0;            // test scan mode data output
+
+wire [1:0] out ;
+reg [9:0]R [4:0];
+always @(posedge clk or posedge reset)
+    if (reset)
+        begin
+          R[0] <= 5 ;
+          R[1] <= 5 ;
+          R[2] <= 5 ;
+          R[3] <= 5 ;
+          R[4] <= 5 ;
+       end   
+    else
+        begin
+          R[0] <= in;
+          R[1] <=  R[0] ;
+          R[2] <=  R[1] ;
+          R[3] <=  R[2] ;
+          assign out = R[4] ;
+       end
+        
+endmodule 

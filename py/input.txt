@@ -1,0 +1,4 @@
+width =15;
+stages =5;
+reset =0xA;
+outfile =test.txt;
