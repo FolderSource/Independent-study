@@ -188,6 +188,9 @@ wire [1:0] out ;\n"""
     f2.write(stages_str)
     f2.write(":0];\n")
             # print "We're on time %d" % (x)
+    f2.write("assign out = R[")
+    f2.write(stages_str)
+    f2.write("] ;\n")
     template2="""always @(posedge clk or posedge reset)
     if (reset)
         begin\n"""
@@ -207,7 +210,7 @@ wire [1:0] out ;\n"""
           R[0] <= in;\n"""
     f2.write(template3)
     
-    for x in range(1, stages):
+    for x in range(1, stages+1):
     	f2.write("          R[")
 	f2.write(str(x)) 
         f2.write("] <= ") 
@@ -219,9 +222,7 @@ wire [1:0] out ;\n"""
     #      R2 <= R1;
     #      R3 <= R2;
     #      R4 <= R3;
-    f2.write("          assign out = R[")
-    f2.write(stages_str)
-    f2.write("] ;\n")
+
     template4="""       end
         
 endmodule """
