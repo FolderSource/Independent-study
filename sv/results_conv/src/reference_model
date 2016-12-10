@@ -1,0 +1,199 @@
+function int reference_model (clk,
+            reset,
+            rcc_clk,
+            address,
+            din,
+           //output digit_clk,
+           //output dout,
+           //output dout_flag,
+            test_mode,
+            scan_in0,  scan_in1, scan_en);
+	   //output scan_out0, output scan_out1
+       
+	logic [3:0] address;
+	logic [15:0] r697,r770,r852,r941,r1209,r1336,r1477,r1633,low_mag,high_mag;
+	logic [2:0] low, high ;
+	logic [15:0] din;
+	logic test_mode, scan_in0, scan_in1, scan_en;
+	logic NO_DIGIT;
+	logic [7:0] dout;
+	//need to delcare output logic 
+	NO_DIGIT = 1'b0;
+
+	parameter key_1     = {2'b00, 2'b00} ;
+	parameter key_2     = {2'b00, 2'b01} ;
+	parameter key_3     = {2'b00, 2'b10} ;
+	parameter key_a     = {2'b00, 2'b11} ;
+	parameter key_4     = {2'b01, 2'b00} ;
+	parameter key_5     = {2'b01, 2'b01} ;
+	parameter key_6     = {2'b01, 2'b10} ;
+	parameter key_b     = {2'b01, 2'b11} ;
+	parameter key_7     = {2'b10, 2'b00} ;
+	parameter key_8     = {2'b10, 2'b01} ;
+	parameter key_9     = {2'b10, 2'b10} ;
+	parameter key_c     = {2'b10, 2'b11} ;
+	parameter key_star  = {2'b11, 2'b00} ;
+	parameter key_0     = {2'b11, 2'b01} ;
+	parameter key_pound = {2'b11, 2'b10} ;
+	parameter key_d     = {2'b11, 2'b11} ;
+
+	scoreboardt sb;
+
+ 	function  new (virtual intf_cnt intf,scoreboardt sb);
+             this.intf = intf;
+             this.sb = sb;
+             //cov = new();
+        endfunction
+
+	if (reset)
+	    	begin
+		digit_clk = 0 ;
+		sb.dout_flag 	= 1 ;
+		clear_flag 	= 0 ;
+		seen_quiet 	= 1 ;
+		out_p1 		= 0 ;
+		out_p2 		= 8'hff ;
+		low		= 0 ;
+		high 		= 0 ;
+		low_mag		= 0 ;
+		high_mag	= 0 ;
+	       // opa		= 0 ;  
+	       // opb		= 0 ;
+	       // opc		= 0 ;
+	       // opd		= 0 ;
+		//start_gt	= 0 ;
+		//clear_gt	= 0 ;
+		//start_ct	= 0 ;
+		//clear_ct	= 0 ;
+		dout 		= 8'hff ;
+		int seen_quiet = 0;
+	    	end
+
+	if (address == 4'b0000)
+		r697 = din;
+	else if (address == 4'b0001)
+		r770 = din;
+	else if (address == 4'b0010)
+		r852 = din;
+	else if (address == 4'b0011)
+		r941 = din;
+	else if (address == 4'b0100)
+		r1209 = din;
+	else if (address = 4'b0101)
+		r1336 = din;
+	else if (address = 4'b0110)
+		r1477 = din;
+	else if (address = 4'b0111)
+		r1633 = din;
+
+	if ( r697 - r770 > 0 && r697 - r852 > 0  && r697 -r941 > 0)
+	begin
+		low = { 1'b0, 2'b00};
+		low_mag = r697;
+	end
+	
+	else if ( r770 - r697 > 0 && r770 - r852 >0 && r770 - r941 > 0 )
+	begin
+		low = { 1'b0, 2'b01};
+		low_mag = r770;
+	end
+
+	else if ( r852 - r697 > 0 && r852 - r770 > 0 && r852 - r941 > 0)
+	begin
+		low = { 1'b0, 2'b10};
+		low_mag = r852;
+	end
+	
+	else if ( r941 - r697 > 0 && r941 - r770 > 0 && r941 - r852 > 0 )
+	begin
+		low = { 1'b0, 2'b11};
+		low_mag = r941;
+	end
+
+	if ( r1209 - r1336 > 0 && r1209 - r1477 > 0 && r1209 - r1633 > 0)
+	begin
+		high = { 1'b0, 2'b00};
+		high_mag = r1209;
+	end 
+	
+	else if ( r1336 - r1209 > 0 && r1336 - r1477 > 0 && r1366 - r1633 > 0 )
+	begin	
+		high = { 1'b0, 2'b01};
+		high_mag = r1366;
+	end
+	
+	else if ( r1477 - r1209 > 0 && r1477 - r1336 > 0 && r1477 - r1633 > 0 )
+	begin	
+		high = { 1'b0, 2'b10};
+		high_mag = r1477;
+	end
+	
+	else if ( r1633 - r1209 > 0 && r1633 - r1336 > 0 && r1633 - r1477 > 0)
+	begin
+		high = { 1'b0,2'b11};
+		high_mag = r1633;
+	end
+	// check starts here
+	if ( !low[2] && !high[2])
+	begin
+		int opa = low_mag;
+		int opb = high_mag;
+		int cmpf = opa - opb;
+		if (cmpf[16])
+		begin
+			cmpf = opa - {2'b0,opb[15:2]};
+			cmpr = opb - opa;
+		end	
+		else
+		begin	
+			cmpf = opb - {2'b0,opa[15:2]};	
+			cmpr = opa - opb;
+		end
+		int okay = (~cmpf[16]) && (~cmpr[16]); 
+	end
+
+	if (okay)
+	begin
+	case ({low[1:0], high[1:0]})
+                        key_1[3:0]     : out_p1 <= "1" ;
+                        key_2[3:0]     : out_p1 <= "2" ;
+                        key_3[3:0]     : out_p1 <= "3" ;
+                        key_a[3:0]     : out_p1 <= "a" ;
+                        key_4[3:0]     : out_p1 <= "4" ;
+                        key_5[3:0]     : out_p1 <= "5" ;
+                        key_6[3:0]     : out_p1 <= "6" ;
+                        key_b[3:0]     : out_p1 <= "b" ;
+                        key_7[3:0]     : out_p1 <= "7" ;
+                        key_8[3:0]     : out_p1 <= "8" ;
+                        key_9[3:0]     : out_p1 <= "9" ;
+                        key_c[3:0]     : out_p1 <= "c" ;
+                        key_star[3:0]  : out_p1 <= "*" ;
+                        key_0[3:0]     : out_p1 <=  "0" ;
+                        key_pound[3:0] : out_p1 <= "#" ;
+                        key_d[3:0]     : out_p1 <= "d" ;
+                        default        : out_p1 <= NO_DIGIT ;
+                    endcase
+	end
+
+	sb.array1.push_front(out_p1);
+
+	int j = 0;
+	j = sb.array1.popback;
+	if (j == out_p1)
+	begin 
+		if ( j ==  NO_DIGIT)
+		begin 
+			int seen_quiet = 1;
+		end
+		else
+			if(seen_quiet)
+			begin
+				seen_quiet = 0;
+				dout = {1'b0,j[6:0]}
+				sb.digit_clk = 1;   //reset in drive before it drives new stimulus
+				sb.dout_flag = ~sb.dout_flag;
+				sb.store = dout;
+			end	
+	end
+
+endfunction

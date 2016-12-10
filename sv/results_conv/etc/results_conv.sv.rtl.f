@@ -2,8 +2,20 @@
 +nowarnIWFA
 +nowarnSVTL
 src/timescale.v
-src/results_conv_test.sv
+//src/results_conv_test.sv
 src/results_conv.v
+src/scoreboard.sv
+src/interfaces.sv
+src/assertion.sv
+src/reference_model.sv
+src/stimulus.sv
+src/monitor.sv
+src/driver.sv
+src/env.sv
+src/test1.sv
+src/top.sv
+
+
 //
 // Add source files above
 //
