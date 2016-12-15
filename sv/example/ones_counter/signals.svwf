@@ -1,0 +1,30 @@
+
+#
+# Mnemonic Maps
+#
+mmap new -reuse -name {Boolean as Logic} -radix %b -contents {{%c=FALSE -edgepriority 1 -shape low}
+{%c=TRUE -edgepriority 1 -shape high}}
+mmap new -reuse -name {Example Map} -radix %x -contents {{%b=11???? -bgcolor orange -label REG:%x -linecolor yellow -shape bus}
+{%x=1F -bgcolor red -label ERROR -linecolor white -shape EVENT}
+{%x=2C -bgcolor red -label ERROR -linecolor white -shape EVENT}
+{%x=* -label %x -linecolor gray -shape bus}}
+
+array unset createdGroup
+array set createdGroup {}
+set id [waveform add -signals [subst  {
+	{[format {top.DUT.clk}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {top.DUT.count[0:3]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {top.DUT.data}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {top.DUT.reset}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {worklib.$unit_0x5d2ec0f2::scoreboard@3_1.store}]}
+	} ]]
+
+waveform xview limits 60ns 2060ns

@@ -1,0 +1,11 @@
+s1(26Nov2016:11:23:05):  ncverilog +ncaccess+r +ncvpicompat+1364v1995 +nowarnTFNPC +nowarnIWFA +nowarnSVTL +nowarnSDFNCAP +gui +nclinedebug -s -f etc/results_conv.rtl.f -input etc/dumpsaif.tcl 
+s2(26Nov2016:13:22:08):  ncverilog -f run.f 
+s3(26Nov2016:13:25:36):  ncverilog -f run.f 
+s4(28Nov2016:01:33:56):  ncverilog -f run.f 
+s5(03Dec2016:16:34:53):  ncverilog -f run.f 
+s6(03Dec2016:16:35:29):  ncverilog -f run.f 
+s7(03Dec2016:16:36:33):  ncverilog -f run.f 
+s8(03Dec2016:16:39:50):  ncverilog -f run.f 
+s9(03Dec2016:16:41:17):  ncverilog -f run.f 
+s10(03Dec2016:16:50:22):  ncverilog -f run.f 
+s11(03Dec2016:19:03:59):  ncverilog -f run.f 
